@@ -1,0 +1,35 @@
+
+name: Build standalone Windows EXE
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+
+      - name: Build RoofStudio EXE
+        run: |
+          pyinstaller --onefile --windowed --name RoofStudio_v0.5 roofstudio.py
+
+      - name: Upload Windows EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: RoofStudio_v0.5_Windows_x64
+          path: dist/RoofStudio_v0.5.exe
